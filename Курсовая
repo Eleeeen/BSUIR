@@ -1,0 +1,86 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class Node {
+public:
+    int key;
+    vector<Node*> children;
+    Node(int key) {
+        this->key = key;
+    }
+};
+
+Node* create_node(int key) {
+    return new Node(key);
+}
+
+Node* insert_key(Node* root, int key) {
+    if (root == nullptr) {
+        return create_node(key);
+    }
+    Node* curr = root;
+    while (true) {
+        bool found = false;
+        for (Node* child : curr->children) {
+            if (child->key == key) {
+                curr = child;
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            break;
+        }
+    }
+    Node* new_node = create_node(key);
+    curr->children.push_back(new_node);
+    return root;
+}
+
+bool search_key(Node* root, int key) {
+    if (root == nullptr) {
+        return false;
+    }
+    for (Node* child : root->children) {
+        if (child->key == key) {
+            return true;
+        }
+    }
+    for (Node* child : root->children) {
+        if (search_key(child, key)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main() {
+    int root_key;
+    cout << "Enter the root key: ";
+    cin >> root_key;
+    Node* root = create_node(root_key);
+
+    int num_keys;
+    cout << "Enter the number of keys: ";
+    cin >> num_keys;
+
+    for (int i = 0; i < num_keys; i++) {
+        int key;
+        cout << "Enter key " << i + 1 << ": ";
+        cin >> key;
+        root = insert_key(root, key);
+    }
+
+    int search_key_value;
+    cout << "Enter the key to search: ";
+    cin >> search_key_value;
+
+    if (search_key(root, search_key_value)) {
+        cout << "The key " << search_key_value << " was found in the tree." << endl;
+    } else {
+        cout << "The key " << search_key_value << " was not found in the tree." << endl;
+    }
+
+    return 0;
+}
